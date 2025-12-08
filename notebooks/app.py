@@ -2,6 +2,13 @@ import streamlit as st
 import cv2
 from ultralytics import YOLO
 import tempfile
+import os
+
+# For browser webcam
+try:
+    from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+except ImportError:
+    webrtc_streamer = None
 
 st.title("Helmet Detection Demo 🚀")
 
@@ -40,32 +47,34 @@ if uploaded_file:
         cap.release()
 
 # --- Camera option ---
-if "run_camera" not in st.session_state:
-    st.session_state.run_camera = False
+st.subheader("Camera Input")
 
-col1, col2 = st.columns(2)
-if col1.button("Start Camera"):
-    st.session_state.run_camera = True
-if col2.button("Stop Camera"):
-    st.session_state.run_camera = False
-
-if st.session_state.run_camera:
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    stframe = st.empty()
-
-    if not cap.isOpened():
-        st.error("❌ Cannot open camera")
-    else:
-        while st.session_state.run_camera:
-            ret, frame = cap.read()
-            if not ret:
-                break
-
-            results = model(frame, conf=0.25)
+if os.environ.get("STREAMLIT_RUNTIME") == "cloud" and webrtc_streamer:
+    # Use browser webcam on Streamlit Cloud
+    class HelmetTransformer(VideoTransformerBase):
+        def transform(self, frame):
+            img = frame.to_ndarray(format="bgr24")
+            results = model(img, conf=0.25)
             annotated = results[0].plot()
-            annotated = cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB)
+            return cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB)
 
-            stframe.image(annotated)
+    webrtc_streamer(key="helmet-detection", video_transformer_factory=HelmetTransformer)
 
+else:
+    # Local OpenCV camera
+    if st.button("Start Local Camera"):
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        stframe = st.empty()
 
-        cap.release()
+        if not cap.isOpened():
+            st.error("❌ Cannot open local camera")
+        else:
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    break
+                results = model(frame, conf=0.25)
+                annotated = results[0].plot()
+                annotated = cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB)
+                stframe.image(annotated)
+            cap.release()
