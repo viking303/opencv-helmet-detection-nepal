@@ -6,7 +6,7 @@ import tempfile
 st.title("Helmet Detection Demo 🚀")
 
 # Load YOLO model
-model = YOLO("best.pt")
+model = YOLO("notebooks/best.pt")
 
 # --- Upload option ---
 uploaded_file = st.file_uploader("Upload an image or video", type=["jpg","jpeg","png","mp4"])
@@ -66,5 +66,6 @@ if st.session_state.run_camera:
             annotated = cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB)
 
             stframe.image(annotated)
+
 
         cap.release()
