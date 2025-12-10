@@ -16,6 +16,9 @@ This project uses OpenCV and YOLO to detect whether motorbike riders are wearing
 2. Run the cells to train or evaluate the model.
 3. See `examples/` for demo outputs.
 
+## Demo try:
+https://helmet-detection-nepal.streamlit.app/
+
 ## Repository structure
 .
 ├── notebooks/
