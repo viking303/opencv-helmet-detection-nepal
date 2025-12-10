@@ -19,19 +19,6 @@ This project uses OpenCV and YOLO to detect whether motorbike riders are wearing
 ## Demo try:
 https://helmet-detection-nepal.streamlit.app/
 
-## Repository structure
-.
-├── notebooks/
-│   └── helmet_detection_nepal.ipynb   # Your Colab notebook for training & experiments
-├── src/
-│   ├── infer_video.py                 # Script to run detection on video/webcam
-│   └── infer_images.py                # Script to run detection on images
-├── data/                              # (Optional) small sample images or metadata
-├── examples/
-│   ├── screenshots/                   # Save output images with bounding boxes
-│   └── demo_videos/                   # Save short demo videos with detection
-├── requirements.txt                   # Python dependencies (OpenCV, torch, ultralytics, etc.)
-└── LICENSE                            # MIT license for open-source sharing
 
 ## Results
 - Add precision/recall, confusion matrix, and demo screenshots.
